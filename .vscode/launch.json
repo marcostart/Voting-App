@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-VoteApplication<vote>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.hobam.vote.VoteApplication",
+            "projectName": "vote",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

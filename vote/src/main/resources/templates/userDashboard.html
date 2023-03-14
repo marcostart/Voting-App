@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="garden">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../main.css" rel="stylesheet">
+  <title>VoteApp</title>
+</head>
+
+<body class="bg-base-100">
+  <header>
+    <nav class="navbar bg-primary">
+      <div class="navbar-start">
+        <div class="dropdown">
+          <label tabindex="0" class="btn btn-ghost btn-circle">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+            </svg>
+          </label>
+          <ul tabindex="0" class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
+            <li><a th:href="@{/user/dashboard}">Elections</a></li>
+            <li><a href="/">Retour à l'accueil</a></li>
+
+          </ul>
+        </div>
+      </div>
+      <div class="navbar-center">
+        <a class="btn btn-ghost normal-case text-xl">VoteApp</a>
+      </div>
+      <div class="navbar-end">
+        <div class="form-control">
+          <input type="text" placeholder="Search" class="input input-bordered" />
+        </div>
+        <button class="btn btn-ghost btn-circle">
+          <div class="indicator">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+            <span class="badge badge-xs badge-primary indicator-item"></span>
+          </div>
+        </button>
+        <div class="dropdown dropdown-end">
+          <label tabindex="0" class="btn btn-ghost btn-circle avatar">
+            <div class="w-10 rounded-full">
+              <img src="../images/avatar.jpg" />
+            </div>
+          </label>
+          <ul tabindex="0" class="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52">
+            <!-- <li>
+              <a class="justify-between">
+                Profile
+                <!-- <span class="badge">New</span> --:>
+              </a>
+            </li> -->
+            <!-- <li><a>Settings</a></li> -->
+            <li><a th:href="@{/vote/logout}">Logout</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+  <h1 class="m-8 font-mono text-4xl text-center">Les elections en cours</h1>
+  <!-- <section class="m-12 rounded-3xl bg-secondary p-8 "> -->
+  <section class=" m-12 rounded-3xl bg-secondary p-8 text-gray-600 body-font overflow-hidden">
+    <div class="container px-5 py-14 mx-auto">
+      <div class="-my-8 divide-y-2 divide-gray-100">
+
+
+        <div class="py-8 flex flex-wrap md:flex-nowrap" id="vote1" th:each="election : ${elections}"
+          th:if="${election.state == 0 and election.cloture.isAfter(date)}">
+          <div class="md:w-64 md:mb-0 mb-6 flex-shrink-0 flex flex-col">
+            <span class="font-semibold title-font text-gray-700" th:text="${df.format(election.cloture)}">12 Jun
+              2019</span>
+            <!-- <span class="mt-1 text-gray-500 text-sm">12 Jun 2019</span> -->
+          </div>
+          <div class="md:flex-grow">
+            <h2 class="text-2xl font-medium text-gray-900 title-font mb-2" th:text="${election.electionName}">Bitters
+              hashtag waistcoat fashion axe chia
+              unicorn</h2>
+            <p class="leading-relaxed" th:text="${election.description}">Glossier echo park pug, church-key sartorial
+              biodiesel vexillologist pop-up
+              snackwave ramps cornhole. Marfa 3 wolf moon party messenger bag selfies, poke vaporware kombucha
+              lumbersexual pork belly polaroid hoodie portland craft beer.</p>
+            <label th:for="${election.id}" class="btn border-none mt-4 text-black  hover:text-white bg-secondary-focus">
+
+              Voter
+              <svg class="w-4 h-4 ml-2" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12h14"></path>
+                <path d="M12 5l7 7-7 7"></path>
+              </svg>
+
+
+            </label>
+          </div>
+          <input type="checkbox" th:id="${election.id}" class="modal-toggle" hidden />
+          <div class="modal">
+            <div class="modal-box">
+              <label th:for="${election.id}" class="btn  btn-circle ">✕</label>
+              <form method="POST" th:action="@{/user/vote}" th:object="${codeVote}">
+                <h3 class="font-bold text-lg">Veuillez entrer le code du vote :</h3>
+                <input type="text" name="code" th:field="*{code}" id="code" class="input input-bordered" required>
+                <h3 class="font-bold text-lg">Veuillez entrer votre matricule :</h3>
+                <input type="text" name="matricule" th:field="*{matricule}" id="matricule" class="input input-bordered" required>
+                <input type="hidden" th:value="${election.id}" name="id" id="id">
+                <button type="submit">
+                  <div class="modal-action">
+                    <a class="btn">Soumettre</a>
+                  </div>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+
+
+
+
+
+      </div>
+    </div>
+  </section>
+
+  <!-- </section> -->
+  <h1 class="m-8 font-mono text-4xl text-center">Les elections passées</h1>
+  <section class=" m-12 rounded-3xl bg-secondary p-8 text-gray-600 body-font overflow-hidden">
+    <div class="container px-5 py-14 mx-auto">
+      <div class="-my-8 divide-y-2 divide-gray-100">
+        <div class="py-8 flex flex-wrap md:flex-nowrap" th:each="election : ${elections}"
+          th:if="${election.state == 0 and election.cloture.isBefore(date)}">
+          <div class="md:w-64 md:mb-0 mb-6 flex-shrink-0 flex flex-col">
+            <span class="font-semibold title-font text-gray-700" th:text="${df.format(election.cloture)}">12 Jun
+              2019</span>
+            <!-- <span class="mt-1 text-gray-500 text-sm">12 Jun 2019</span> -->
+          </div>
+          <div class="md:flex-grow">
+            <h2 class="text-2xl font-medium text-gray-900 title-font mb-2" th:text="${election.electionName}">Bitters
+              hashtag waistcoat fashion axe chia
+              unicorn</h2>
+            <p class="leading-relaxed" th:text="${election.description}">Glossier echo park pug, church-key sartorial
+              biodiesel vexillologist pop-up
+              snackwave ramps cornhole. Marfa 3 wolf moon party messenger bag selfies, poke vaporware kombucha
+              lumbersexual pork belly polaroid hoodie portland craft beer.</p>
+            <a class="inline-flex items-center" href="/resultats">
+              <button class="btn border-none mt-4 text-black  hover:text-white bg-secondary-focus"><a
+                  th:href="@{/resultat/{id}(id= ${election.id})}">Voir le resultat</a>
+                <svg class="w-4 h-4 ml-2" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12h14"></path>
+                  <path d="M12 5l7 7-7 7"></path>
+                </svg>
+              </button>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+  <footer class="footer p-10 bg-primary text-base-content">
+    <!-- <div>
+            <span class="footer-title">Services</span>
+            <a class="link link-hover">Branding</a>
+            <a class="link link-hover">Design</a>
+            <a class="link link-hover">Marketing</a>
+            <a class="link link-hover">Advertisement</a>
+        </div> -->
+    <div>
+      <span class="footer-title">Company</span>
+      <a class="link link-hover">About us</a>
+      <a class="link link-hover">Contact</a>
+      <!-- <a class="link link-hover">Jobs</a>
+          <a class="link link-hover">Press kit</a> -->
+    </div>
+    <div>
+      <span class="footer-title">Legal</span>
+      <a class="link link-hover">Terms of use</a>
+      <a class="link link-hover">Privacy policy</a>
+      <!-- <a class="link link-hover">Cookie policy</a> -->
+    </div>
+    <div>
+      <span class="footer-title">Newsletter</span>
+      <div class="form-control w-80">
+        <label class="label">
+          <span class="label-text">Enter your email address</span>
+        </label>
+        <div class="relative">
+          <input type="text" placeholder="username@site.com" class="input input-bordered w-full pr-16" />
+          <button class="btn btn-secondary absolute top-0 right-0 rounded-l-none">Subscribe</button>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+
+
+</body>
+
+</html>
